@@ -1,17 +1,19 @@
 package RecursosCompartidos;
 
-import Hilos.Reloj;
+import Recursos.CentroDeClasesGrupales;
 import Recursos.Confiteria;
 import Recursos.Entrada;
 
 public class ComplejoInvernal {
 
-    Entrada entrada;
-    Confiteria confiteria;
+    private Entrada entrada;
+    private Confiteria confiteria;
+    private CentroDeClasesGrupales centroDeClasesGrupales;
 
     public ComplejoInvernal() {
         entrada = new Entrada(this);
         confiteria = new Confiteria();
+        centroDeClasesGrupales = new CentroDeClasesGrupales(this);
     }
 
     public void entrarConfiteria(int tipoUso) throws InterruptedException {
@@ -24,5 +26,13 @@ public class ComplejoInvernal {
 
     public void entrarAComplejo() throws InterruptedException {
         entrada.personaIntentaEntrar();
+    }
+
+    public void participarClase() throws InterruptedException {
+        centroDeClasesGrupales.participarClase();
+    }
+
+    public void instruirClase() throws InterruptedException {
+        centroDeClasesGrupales.instruirClase();
     }
 }

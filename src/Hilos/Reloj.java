@@ -26,7 +26,7 @@ public class Reloj extends Thread {
         }
     }
 
-    public void sumarTiempo(int minutosASumar) throws InterruptedException {
+    private void sumarTiempo(int minutosASumar) throws InterruptedException {
         int horas = horaMilitar / 100;
         int minutos = horaMilitar % 100;
         int horasASumar = (minutos + minutosASumar) / 60;

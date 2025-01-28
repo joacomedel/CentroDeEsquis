@@ -8,17 +8,19 @@ import Hilos.Reloj;
 import RecursosCompartidos.ComplejoInvernal;
 
 public class Entrada {
-    private final Reloj reloj;
     private final int horaApertura = 1000;
     private final int horaCierre = 1700;
     private final int horaInicioReloj = 1630;
     private int horaActual;
     private final Lock lockEntrada = new ReentrantLock();
     private Condition lockCondicion = lockEntrada.newCondition();
-    boolean boolAbierto = horaActual <= horaCierre && horaActual > horaApertura;
+    boolean boolAbierto;
 
     public Entrada(ComplejoInvernal compInv) {
-        reloj = new Reloj(compInv, horaInicioReloj);
+        Reloj reloj = new Reloj(compInv, horaInicioReloj);
+        horaActual = horaInicioReloj;
+        boolAbierto = horaActual <= horaCierre && horaActual >= horaApertura;
+        System.out.println("Estaba abierto?" + boolAbierto);
         reloj.start();
     }
 

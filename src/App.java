@@ -8,7 +8,7 @@ public class App {
 
     public static void main(String[] args) throws Exception {
         ComplejoInvernal compInv = new ComplejoInvernal();
-        Persona[] personas = new Persona[150];
+        Persona[] personas = new Persona[10];
         for (int i = 0; i < personas.length; i++) {
             Persona persona = personas[i];
             persona = new Persona(compInv, i);
