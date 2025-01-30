@@ -6,13 +6,13 @@ import RecursosCompartidos.ComplejoInvernal;
 public class Persona extends Thread {
     private int actividadAHacer;
     ComplejoInvernal complInv;
-    int id;
     Random random;
 
+    // el nombre del thread es la id que se le pasa por parametro a la persona
     public Persona(ComplejoInvernal complejoInvIn, int idIn) {
         random = new Random();
         complInv = complejoInvIn;
-        id = idIn;
+        setName("" + idIn);
     }
 
     @Override

@@ -10,6 +10,7 @@ public class Instructor extends Thread {
     Random random;
 
     public Instructor(ComplejoInvernal complejoInv) {
+        System.out.println("se creo el instructor");
         this.complInv = complejoInv;
     }
 
@@ -17,6 +18,7 @@ public class Instructor extends Thread {
     public void run() {
         try {
             do {
+                System.out.println("Intenta instruir");
                 complInv.instruirClase();
             } while (true);
         } catch (InterruptedException e) {

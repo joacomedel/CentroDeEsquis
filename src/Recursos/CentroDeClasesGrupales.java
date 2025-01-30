@@ -9,10 +9,10 @@ import RecursosCompartidos.ComplejoInvernal;
 public class CentroDeClasesGrupales {
     private Semaphore instructorEspera;
     private Semaphore alumnosEspera;
-    private static int cantAlumnosXClase = 4;
-    private static int segundosEspera = 14;
-    private static int cantidadInstructores = 3;
-    private static int msDuracionClase = 50000;
+    private final static int cantAlumnosXClase = 4;
+    private final static int segundosEspera = 14;
+    private final static int cantidadInstructores = 5;
+    private final static int msDuracionClase = 50000;
 
     public CentroDeClasesGrupales(ComplejoInvernal complInv) {
         instructorEspera = new Semaphore(0, true);
@@ -26,7 +26,7 @@ public class CentroDeClasesGrupales {
 
     public void participarClase() throws InterruptedException {
         instructorEspera.release(1);
-        System.out.println("Alumno espera la clase grupal");
+        System.out.println("Alumno " + Thread.currentThread().getName() + " espera la clase grupal");
         if (alumnosEspera.tryAcquire(segundosEspera, TimeUnit.SECONDS)) {
             // Vino el instructor
             System.out.println("Vino el instructor");
