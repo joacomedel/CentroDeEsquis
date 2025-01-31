@@ -13,20 +13,25 @@ public class CentroDeClasesGrupales {
     private final static int segundosEspera = 14;
     private final static int cantidadInstructores = 5;
     private final static int msDuracionClase = 50000;
+    private Instructor[] instructores;
 
-    public CentroDeClasesGrupales(ComplejoInvernal complInv) {
+    public CentroDeClasesGrupales() {
         instructorEspera = new Semaphore(0, true);
         alumnosEspera = new Semaphore(0, true);
-        for (int i = 0; i < cantidadInstructores; i++) {
-            Instructor ins = new Instructor(complInv);
-            ins.start();
-        }
+    }
 
+    public void iniciar(ComplejoInvernal complInv) {
+        instructores = new Instructor[cantidadInstructores];
+        for (int i = 0; i < cantidadInstructores; i++) {
+            instructores[i] = new Instructor(complInv, i);
+            instructores[i].start();
+        }
     }
 
     public void participarClase() throws InterruptedException {
-        instructorEspera.release(1);
+        // EJECUTADO POR PERSONA
         System.out.println("Alumno " + Thread.currentThread().getName() + " espera la clase grupal");
+        instructorEspera.release(1);
         if (alumnosEspera.tryAcquire(segundosEspera, TimeUnit.SECONDS)) {
             // Vino el instructor
             System.out.println("Vino el instructor");
@@ -45,6 +50,8 @@ public class CentroDeClasesGrupales {
     }
 
     public void instruirClase() throws InterruptedException {
+        // EJECUTADO POR INSTRUCTOR
+
         // instructor espera a que vengan la cantidad de alumnos necesarios para la
         // clase
         System.out.println("Espera que vengan la cantidad de alumnos necesaria");

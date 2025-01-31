@@ -10,9 +10,9 @@ public class App {
         ComplejoInvernal compInv = new ComplejoInvernal();
         Persona[] personas = new Persona[10];
         for (int i = 0; i < personas.length; i++) {
-            Persona persona = personas[i];
-            persona = new Persona(compInv, i);
-            persona.start();
+
+            personas[i] = new Persona(compInv, i);
+            personas[i].start();
         }
     }
 }

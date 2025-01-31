@@ -12,9 +12,11 @@ public class MedioDeElevacion {
     private Semaphore mutex;
     private int usos;
     private static int segundoEspera = 35;
+    private int cantMolinetes;
 
     public MedioDeElevacion(int n) {
-        molinetes = new CyclicBarrier(n);// ?
+        cantMolinetes = n;
+        molinetes = new CyclicBarrier(cantMolinetes);
         mutex = new Semaphore(1);
     }
 
@@ -24,7 +26,13 @@ public class MedioDeElevacion {
         } else {
             // Si tiene pase
             try {
+                System.out.println("Espera que vengan las personas necesarias para avanzar en el molinete");
                 molinetes.await(segundoEspera, TimeUnit.SECONDS);
+                System.out.println("Sube por el medio de elevacion");
+                mutex.acquire();
+                usos++;
+                mutex.release();
+
             } catch (TimeoutException e) {
                 System.out.println("Espero mucho tiempo por molinetes ");
             }

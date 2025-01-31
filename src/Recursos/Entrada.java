@@ -16,15 +16,21 @@ public class Entrada {
     private Condition lockCondicion = lockEntrada.newCondition();
     boolean boolAbierto;
 
-    public Entrada(ComplejoInvernal compInv) {
-        Reloj reloj = new Reloj(compInv, horaInicioReloj);
+    // Look utilizado para que no existan muchas personas adquiriendo el permiso que
+    // necesita el reloj para cambiar la hora, se utiliza la condicion
+    public Entrada() {
         horaActual = horaInicioReloj;
         boolAbierto = horaActual <= horaCierre && horaActual >= horaApertura;
-        System.out.println("Estaba abierto?" + boolAbierto);
+    }
+
+    public void iniciar(ComplejoInvernal compInv) {
+        Reloj reloj = new Reloj(compInv, horaInicioReloj);
         reloj.start();
     }
 
     public void personaIntentaEntrar() throws InterruptedException {
+        // Ejecutado por persona
+
         lockEntrada.lock();
         if (!boolAbierto) {
             System.out.println("No estaba abierto");
@@ -35,6 +41,8 @@ public class Entrada {
     }
 
     public void cambiarHora(int horaActualIn) {
+        // Ejecutado por reloj
+
         if (horaActual <= horaApertura) {
             // antes estaba cerrado
             if (horaActualIn >= horaApertura) {

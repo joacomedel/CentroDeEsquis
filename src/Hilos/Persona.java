@@ -20,12 +20,10 @@ public class Persona extends Thread {
 
         try {
             do {
-
-                System.out.println("Persona intenta entrar al complejo");
                 complInv.entrarAComplejo();
-                System.out.println("Persona entro al complejo");
                 // complInv.entrarConfiteria(random.nextInt(2));
-                complInv.participarClase();
+                // complInv.participarClase();
+
             } while (true);
         } catch (InterruptedException e) {
             // TODO Auto-generated catch block
