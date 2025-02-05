@@ -1,6 +1,7 @@
 package RecursosCompartidos;
 
 import java.util.Random;
+import java.util.concurrent.BrokenBarrierException;
 
 import Recursos.CentroDeClasesGrupales;
 import Recursos.Confiteria;
@@ -21,8 +22,8 @@ public class ComplejoInvernal {
         confiteria = new Confiteria();
         centroDeClasesGrupales = new CentroDeClasesGrupales();
         centroDeClasesGrupales.iniciar(this);
-
         Random random = new Random();
+        mediosDeElevacion = new MedioDeElevacion[cantMedios];
         for (int i = 0; i < mediosDeElevacion.length; i++) {
             mediosDeElevacion[i] = new MedioDeElevacion(random.nextInt(3) + 1);
         }
@@ -49,7 +50,21 @@ public class ComplejoInvernal {
         centroDeClasesGrupales.instruirClase();
     }
 
-    public void subir() {
+    public void subir() throws InterruptedException {
+
+        boolean subio = false;
+        int i = 0;
+        while (!subio && i < mediosDeElevacion.length) {
+            if (!mediosDeElevacion[i].estaEnUso()) {
+                subio = mediosDeElevacion[i].subir();
+            }
+            i++;
+        }
+        if (!subio) {
+            // si no subio y todos estaban ocupados espera en alguno random
+            Random random = new Random();
+            mediosDeElevacion[random.nextInt(cantMedios)].subir();
+        }
 
     }
 }

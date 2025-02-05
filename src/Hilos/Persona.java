@@ -1,6 +1,8 @@
 package Hilos;
 
 import java.util.Random;
+import java.util.concurrent.BrokenBarrierException;
+
 import RecursosCompartidos.ComplejoInvernal;
 
 public class Persona extends Thread {
@@ -21,9 +23,13 @@ public class Persona extends Thread {
         try {
             do {
                 complInv.entrarAComplejo();
-                // complInv.entrarConfiteria(random.nextInt(2));
-                // complInv.participarClase();
-
+                complInv.subir();
+                if (random.nextInt(2) == 0) {
+                    complInv.entrarConfiteria(random.nextInt(2));
+                }
+                if (random.nextInt(2) == 0) {
+                    complInv.participarClase();
+                }
             } while (true);
         } catch (InterruptedException e) {
             // TODO Auto-generated catch block
