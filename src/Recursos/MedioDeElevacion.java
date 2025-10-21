@@ -6,6 +6,11 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import interfaz.Interfaz;
+
+//Recurso compartido utilizando LOCKS  
+
+
 public class MedioDeElevacion {
     private int usos;
     private int cantMolinetes;
@@ -16,6 +21,8 @@ public class MedioDeElevacion {
     private boolean boolEnUso;
     private final int segundoMaximosEspera = 40;
 
+    
+    
     public MedioDeElevacion(int n) {
         cantMolinetes = n;
         usoActual = 0;
@@ -32,39 +39,41 @@ public class MedioDeElevacion {
         try {
             lock.lock();
             while (boolEnUso) {
-                System.out.println("Entro al medio de elevacion pero estaba en uso");
+            	Interfaz.esperandoGrupo();
                 conditionEnUso.await(segundoMaximosEspera, TimeUnit.SECONDS);
             }
             usoActual++;
-            System.out.println("Persona:" + Thread.currentThread().getName() + " subio, uso actual " + usoActual);
+            Interfaz.llegadaMolinete(usoActual, cantMolinetes);
             subio = true;
             if (usoActual == cantMolinetes) {
                 // es el ultimo en entrar0
                 boolEnUso = true;
                 conditionEsperaResto.signalAll();
-                System.out.println("Entro la ultima persona necesaria para que salga el medio de elevacion");
+                Interfaz.grupoCompletoViaja(cantMolinetes);
             } else {
                 // no es el ultimo
-                System.out.println("Espera que vengan el resto de personas");
+            	Interfaz.esperandoGrupo();
                 conditionEsperaResto.await();
             }
             lock.unlock();
+            Interfaz.viajandoEnMedio(); 
             Thread.sleep(500);// Simula duracion del viaje
             lock.lock();
             usoActual--;
             if (usoActual == 0) {
                 boolEnUso = false;
                 conditionEnUso.signalAll();
-                System.out.println("Bajo la ultima persona");
+                Interfaz.ultimaPersonaBaja();
+                usos++; //De cada medio cuenta la cantidad de veces q se uso
             } else {
-                System.out.println("Ya se bajo");
+            	Interfaz.personaSeBajo();
             }
-            usos++;
+            //usos++; De cada medio cuento la cantidad de personas q lo usaron 
             lock.unlock();
         } catch (InterruptedException e) {
             // TODO: handle exception
             subio = false;
-            System.out.println("Espero mucho pero no viene nadie mas");
+            Interfaz.esperandoMuchoTiempo();
         }
         return subio;
     }

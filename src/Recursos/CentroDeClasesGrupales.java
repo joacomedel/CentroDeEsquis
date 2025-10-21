@@ -5,6 +5,10 @@ import java.util.concurrent.TimeUnit;
 
 import Hilos.Instructor;
 import RecursosCompartidos.ComplejoInvernal;
+import interfaz.Interfaz;
+
+
+//Recurso compartido utilizando Semaforos 
 
 public class CentroDeClasesGrupales {
     private Semaphore instructorEspera;
@@ -30,20 +34,20 @@ public class CentroDeClasesGrupales {
 
     public void participarClase() throws InterruptedException {
         // EJECUTADO POR PERSONA
-        System.out.println("Alumno " + Thread.currentThread().getName() + " espera la clase grupal");
+    	Interfaz.alumnoEsperando();
         instructorEspera.release(1);
         if (alumnosEspera.tryAcquire(segundosEspera, TimeUnit.SECONDS)) {
             // Vino el instructor
-            System.out.println("Vino el instructor");
+        	Interfaz.claseIniciada();
             // Participa de la clase
             Thread.sleep(msDuracionClase);
         } else {
             // No vino el instructor por lo tanto devuelve el permiso y deja de esperar
-            System.out.println("Espero mucho tiempo, se va");
+        	Interfaz.alumnoSeVa();
             if (instructorEspera.tryAcquire(1)) {
                 System.out.println("Devolvio bien el permiso");
             } else {
-                System.out.println("Devolvio MALLLLL el permiso");
+                System.out.println("Devolvio mal el permiso");
             }
         }
 
@@ -54,7 +58,7 @@ public class CentroDeClasesGrupales {
 
         // instructor espera a que vengan la cantidad de alumnos necesarios para la
         // clase
-        System.out.println("Espera que vengan la cantidad de alumnos necesaria");
+    	Interfaz.instructorEsperando();
         instructorEspera.acquire(cantAlumnosXClase);
         System.out.println("Vinieron los alumnos necesarios ");
         System.out.println("Da permiso a los alumnos para comenzar la clase");

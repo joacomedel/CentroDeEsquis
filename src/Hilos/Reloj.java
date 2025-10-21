@@ -19,8 +19,12 @@ public class Reloj extends Thread {
         try {
             while (true) {
                 sumarTiempo(15);
-                compInv.cambiarHora(horaMilitar);
-                Thread.sleep(60000);
+                if(compInv.cambiarHora(horaMilitar) == -1) {
+                	//Significa que cambie la hora y cerre
+                	compInv.cerrar();
+                	System.out.println("Cerro el complejo");
+                }
+                Thread.sleep(15000);
             }
         } catch (InterruptedException e) {
         }

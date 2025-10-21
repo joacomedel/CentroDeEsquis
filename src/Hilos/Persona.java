@@ -25,9 +25,11 @@ public class Persona extends Thread {
                 complInv.entrarAComplejo();
                 complInv.subir();
                 if (random.nextInt(2) == 0) {
+                	System.out.println("Persona " + getName() + " decide ir a la Confitería.");
                     complInv.entrarConfiteria(random.nextInt(2));
                 }
                 if (random.nextInt(2) == 0) {
+                	System.out.println("Persona " + getName() + " decide participar en una clase grupal.");
                     complInv.participarClase();
                 }
             } while (true);

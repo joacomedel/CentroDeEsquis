@@ -1,5 +1,6 @@
 package RecursosCompartidos;
 
+import java.util.Iterator;
 import java.util.Random;
 import java.util.concurrent.BrokenBarrierException;
 
@@ -7,6 +8,7 @@ import Recursos.CentroDeClasesGrupales;
 import Recursos.Confiteria;
 import Recursos.Entrada;
 import Recursos.MedioDeElevacion;
+import interfaz.Interfaz;
 
 public class ComplejoInvernal {
 
@@ -34,8 +36,8 @@ public class ComplejoInvernal {
         confiteria.usaConfiteria(tipoUso);
     }
 
-    public void cambiarHora(int horaActualIn) {
-        entrada.cambiarHora(horaActualIn);
+    public int cambiarHora(int horaActualIn) {
+        return entrada.cambiarHora(horaActualIn);
     }
 
     public void entrarAComplejo() throws InterruptedException {
@@ -66,5 +68,22 @@ public class ComplejoInvernal {
             mediosDeElevacion[random.nextInt(cantMedios)].subir();
         }
 
+    }
+    public void cerrar() {
+    	//Cerre al cambiar la hora , podria cerrar desde aca tmb
+    	try {
+    		Interfaz.complejoCerrado();
+    		Interfaz.mostrarReporteUsos(mediosDeElevacion);
+			this.reiniciarUsos();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    }
+    public void reiniciarUsos() throws InterruptedException {
+    	for (int i = 0; i < mediosDeElevacion.length; i++) {
+			mediosDeElevacion[i].reiniciarUso();
+		}
     }
 }
