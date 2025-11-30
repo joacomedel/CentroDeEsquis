@@ -36,10 +36,6 @@ public class ComplejoInvernal {
         confiteria.usaConfiteria(tipoUso);
     }
 
-    public int cambiarHora(int horaActualIn) {
-        return entrada.cambiarHora(horaActualIn);
-    }
-
     public void entrarAComplejo() throws InterruptedException {
         entrada.personaIntentaEntrar();
     }
@@ -53,7 +49,7 @@ public class ComplejoInvernal {
     }
 
     public void subir() throws InterruptedException {
-
+    	/*
         boolean subio = false;
         int i = 0;
         while (!subio && i < mediosDeElevacion.length) {
@@ -67,7 +63,9 @@ public class ComplejoInvernal {
             Random random = new Random();
             mediosDeElevacion[random.nextInt(cantMedios)].subir();
         }
-
+        */
+        Random random = new Random();
+        mediosDeElevacion[random.nextInt(cantMedios)].subir();
     }
     public void cerrar() {
     	//Cerre al cambiar la hora , podria cerrar desde aca tmb
@@ -85,5 +83,11 @@ public class ComplejoInvernal {
     	for (int i = 0; i < mediosDeElevacion.length; i++) {
 			mediosDeElevacion[i].reiniciarUso();
 		}
+    }
+    public void cerrarEntrada(int horaActualIn) throws InterruptedException {
+    	entrada.cerrarComplejo(horaActualIn);
+    }
+    public void abrirEntrada(int horaActualIn) throws InterruptedException {
+    	entrada.abrirComplejo(horaActualIn);
     }
 }

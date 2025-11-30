@@ -13,7 +13,7 @@ public class App {
         // Un único recurso compartido, dividido en distintos recursos
     	ComplejoInvernal compInv = new ComplejoInvernal();
         
-        Persona[] personas = new Persona[20];
+        Persona[] personas = new Persona[40];
         for (int i = 0; i < personas.length; i++) {
             personas[i] = new Persona(compInv, i);
             personas[i].start();

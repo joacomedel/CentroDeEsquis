@@ -1,102 +1,78 @@
 package Recursos;
 
 import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import interfaz.Interfaz;
 
-//Recurso compartido utilizando LOCKS  
-
-
+/**
+ * Recurso compartido utilizando CyclicBarrier (Versión Limpia).
+ * La barrera agrupa a los esquiadores Y maneja el viaje.
+ */
 public class MedioDeElevacion {
-    private int usos;
-    private int cantMolinetes;
-    private int usoActual;
-    private final Lock lock;
-    private final Condition conditionEnUso;
-    private final Condition conditionEsperaResto;
-    private boolean boolEnUso;
-    private final int segundoMaximosEspera = 40;
 
-    
-    
+	private AtomicInteger usos; // Contador de viajes completos
+    private final int cantMolinetes; // Capacidad de la aerosilla (n)
+    private final CyclicBarrier barreraGrupo;
+    private final int segundoMaximosEspera = 40; // Tiempo de espera para formar grupo
+    private final int msTiempoDeViaje = 500; // Duración del viaje
+
     public MedioDeElevacion(int n) {
-        cantMolinetes = n;
-        usoActual = 0;
-        lock = new ReentrantLock();
-        boolEnUso = false;
-        usos = 0;
-        conditionEsperaResto = lock.newCondition();
+        this.cantMolinetes = n;
+        usos = new AtomicInteger(0);
 
-        conditionEnUso = lock.newCondition();
-    }
-
-    public boolean subir() throws InterruptedException {
-        boolean subio = false;
-        try {
-            lock.lock();
-            while (boolEnUso) {
-            	Interfaz.esperandoGrupo();
-                conditionEnUso.await(segundoMaximosEspera, TimeUnit.SECONDS);
-            }
-            usoActual++;
-            Interfaz.llegadaMolinete(usoActual, cantMolinetes);
-            subio = true;
-            if (usoActual == cantMolinetes) {
-                // es el ultimo en entrar0
-                boolEnUso = true;
-                conditionEsperaResto.signalAll();
+        this.barreraGrupo = new CyclicBarrier(n, () -> {
+            // Esta es la acción de "viaje" del grupo completo.
+            try {
                 Interfaz.grupoCompletoViaja(cantMolinetes);
-            } else {
-                // no es el ultimo
-            	Interfaz.esperandoGrupo();
-                conditionEsperaResto.await();
+                Interfaz.viajandoEnMedio();
+                Thread.sleep(msTiempoDeViaje);
+                Interfaz.ultimaPersonaBaja(); // El viaje terminó
+                this.incrementarUso(); // Contabiliza el viaje
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
-            lock.unlock();
-            Interfaz.viajandoEnMedio(); 
-            Thread.sleep(500);// Simula duracion del viaje
-            lock.lock();
-            usoActual--;
-            if (usoActual == 0) {
-                boolEnUso = false;
-                conditionEnUso.signalAll();
-                Interfaz.ultimaPersonaBaja();
-                usos++; //De cada medio cuenta la cantidad de veces q se uso
-            } else {
-            	Interfaz.personaSeBajo();
-            }
-            //usos++; De cada medio cuento la cantidad de personas q lo usaron 
-            lock.unlock();
-        } catch (InterruptedException e) {
-            // TODO: handle exception
-            subio = false;
+        });
+    }
+
+    /**
+     * Lo llama el hilo Persona.
+     */
+    public boolean subir() throws InterruptedException {
+        // 1. La persona llega al molinete (la barrera).
+    	Interfaz.esperandoGrupo();
+        Interfaz.llegadaMolinete(barreraGrupo.getNumberWaiting(), cantMolinetes);
+        try {
+            barreraGrupo.await(segundoMaximosEspera, TimeUnit.SECONDS);
+            Interfaz.personaSeBajo();
+            return true;
+
+        } catch (TimeoutException e) {
+            // 4. El hilo se cansó de esperar (cumple el enunciado).
             Interfaz.esperandoMuchoTiempo();
+            return false;
+        } catch (BrokenBarrierException e) {
+            // 5. Otro hilo se fue por Timeout. Este hilo no subió.
+        	Interfaz.esperandoMuchoTiempo();
+            return false;
         }
-        return subio;
     }
 
-    public void reiniciarUso() throws InterruptedException {
-        lock.lock();
-        usos = 0;
-        lock.unlock();
-    }
+    // --- Métodos de Ayuda (sin cambios) ---
 
+    private int incrementarUso() {
+        return usos.addAndGet(cantMolinetes);
+    }
+    public void reiniciarUso() {
+        usos.set(0);
+    }
+    public int getUsos() {
+        return usos.get();
+    }
     public boolean estaEnUso() {
-        boolean bool;
-        lock.lock();
-        bool = boolEnUso;
-        lock.unlock();
-        return bool;
-    }
-
-    public int getUsos() throws InterruptedException {
-        int temp = 0;
-        lock.lock();
-        temp = usos;
-        lock.unlock();
-        return temp;
+    	return true;
     }
 }
