@@ -24,7 +24,6 @@ public class CentroDeClasesGrupales {
     private Instructor[] instructores;
 
     public CentroDeClasesGrupales() {
-        // Ya no inicializamos semáforos, el lock se creó arriba
     }
 
     public void iniciar(ComplejoInvernal complInv) {
@@ -37,7 +36,7 @@ public class CentroDeClasesGrupales {
 
     public void participarClase() throws InterruptedException {
         // EJECUTADO POR PERSONA
-        lock.lock(); // 🔒 Entro a la zona segura
+        lock.lock(); 
         try {
             Interfaz.alumnoEsperando();
             alumnosEsperando++;

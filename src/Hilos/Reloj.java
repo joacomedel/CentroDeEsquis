@@ -27,6 +27,7 @@ public class Reloj extends Thread {
                 if(this.cambiarHora(horaMilitar) == -1) {
                 	//Significa que cambie la hora y cerre
                 	compInv.cerrar();
+                	
                 	System.out.println("Cerro el complejo");
                 }
                 Thread.sleep(15000);
@@ -59,7 +60,7 @@ public class Reloj extends Thread {
                 // esta abierto
                 if (horaActualIn > horaCierre) {
                     // ahora se paso del horario de cierre , esta cerrado
-                    compInv.cerrarEntrada(horaActualIn);
+                	compInv.cerrarEntrada(horaActualIn);
                     rtn = -1; //Devuelvo -1 si esta cerrado
                 }
             }

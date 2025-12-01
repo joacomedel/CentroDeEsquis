@@ -22,15 +22,16 @@ public class Persona extends Thread {
 
         try {
             do {
-                complInv.entrarAComplejo();
-                complInv.subir();
+                complInv.entrarAComplejo(); // Utiliza entrada
+                complInv.subir(); //Utiliza medio de elevacion
+                //Se podria intentar ver si esta cerrado o no para ver si sigue o no haciendo cosas 
                 if (random.nextInt(2) == 0) {
                 	System.out.println("Persona " + getName() + " decide ir a la Confitería.");
-                    complInv.entrarConfiteria(random.nextInt(2));
+                    complInv.entrarConfiteria(random.nextInt(2)); //Utiliza confiteria
                 }
                 if (random.nextInt(2) == 0) {
                 	System.out.println("Persona " + getName() + " decide participar en una clase grupal.");
-                    complInv.participarClase();
+                    complInv.participarClase(); //Utiliza centro de clases grupales
                 }
             } while (true);
         } catch (InterruptedException e) {
