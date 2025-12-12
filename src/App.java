@@ -18,5 +18,7 @@ public class App {
             personas[i] = new Persona(compInv, i);
             personas[i].start();
         }
+        try { Thread.sleep(java.util.concurrent.ThreadLocalRandom.current().nextLong(500, 3001)); } catch (InterruptedException e) {}
+        //Esperamos una cantidad de tiempo entre medio segundo y 3 segundos asi no entran todos de golpe
     }
 }

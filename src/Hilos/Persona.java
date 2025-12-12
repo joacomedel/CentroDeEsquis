@@ -33,6 +33,8 @@ public class Persona extends Thread {
                 	System.out.println("Persona " + getName() + " decide participar en una clase grupal.");
                     complInv.participarClase(); //Utiliza centro de clases grupales
                 }
+                try { Thread.sleep(java.util.concurrent.ThreadLocalRandom.current().nextLong(500, 3001)); } catch (InterruptedException e) {}
+                //Simula bajada
             } while (true);
         } catch (InterruptedException e) {
             // TODO Auto-generated catch block

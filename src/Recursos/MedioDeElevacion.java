@@ -8,60 +8,73 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import interfaz.Interfaz;
 
-/**
- * Recurso compartido utilizando CyclicBarrier (Versión Limpia).
- * La barrera agrupa a los esquiadores Y maneja el viaje.
- */
 public class MedioDeElevacion {
 
-	private AtomicInteger usos; // Contador de viajes completos
-    private final int cantMolinetes; // Capacidad de la aerosilla (n)
-    private final CyclicBarrier barreraGrupo;
-    private final int segundoMaximosEspera = 40; // Tiempo de espera para formar grupo
-    private final int msTiempoDeViaje = 500; // Duración del viaje
+    private AtomicInteger usos; 
+    private final int cantMolinetes; 
+    
+    private final CyclicBarrier barreraSubida;
+    private final CyclicBarrier barreraBajada;
+    
+    private final int segundoMaximosEspera = 40; 
+    
+    // Tiempos físicos
+    private final int tiempoEntreSillas = 2000; // Tiempo que la barrera queda "ocupada" saliendo
+    private final int tiempoViaje = 3000;       // Tiempo de viaje en el aire
 
     public MedioDeElevacion(int n) {
         this.cantMolinetes = n;
         usos = new AtomicInteger(0);
 
-        this.barreraGrupo = new CyclicBarrier(n, () -> {
-            // Esta es la acción de "viaje" del grupo completo.
+        // --- BARRERA DE SUBIDA ---
+        this.barreraSubida = new CyclicBarrier(n, () -> {
             try {
-                Interfaz.grupoCompletoViaja(cantMolinetes);
-                Interfaz.viajandoEnMedio();
-                Thread.sleep(msTiempoDeViaje);
-                Interfaz.ultimaPersonaBaja(); // El viaje terminó
-                this.incrementarUso(); // Contabiliza el viaje
+                // Esta acción bloquea la liberación de la barrera.
+                // Simula el espacio físico/tiempo entre una silla y la otra.
+                // Nadie puede empezar a subir al siguiente grupo hasta que esto termine.
+                Interfaz.grupoCompletoViaja(cantMolinetes); 
+                Thread.sleep(tiempoEntreSillas); 
+                this.incrementarUso(); 
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
         });
+
+        // --- BARRERA DE BAJADA ---
+        this.barreraBajada = new CyclicBarrier(n, () -> {
+        });
     }
 
-    /**
-     * Lo llama el hilo Persona.
-     */
     public boolean subir() throws InterruptedException {
-        // 1. La persona llega al molinete (la barrera).
-    	Interfaz.esperandoGrupo();
-        Interfaz.llegadaMolinete(barreraGrupo.getNumberWaiting(), cantMolinetes);
+        Interfaz.esperandoGrupo();
+        Interfaz.llegadaMolinete(barreraSubida.getNumberWaiting(), cantMolinetes);
+        
         try {
-            barreraGrupo.await(segundoMaximosEspera, TimeUnit.SECONDS);
-            Interfaz.personaSeBajo();
-            return true;
+            // 1. SUBIDA: Esperamos a llenar la silla
+            // Si la barrera está ejecutando la acción (el sleep de 2s), nos quedamos bloqueados aquí
+            barreraSubida.await(segundoMaximosEspera, TimeUnit.SECONDS);
+            
+            // Una vez que pasamos el await, significa que la silla ya "salió" de la plataforma.
+            // Ahora estamos en el aire.
+            Interfaz.viajandoEnMedio(); 
+            
 
-        } catch (TimeoutException e) {
-            // 4. El hilo se cansó de esperar (cumple el enunciado).
+        } catch (TimeoutException | BrokenBarrierException e) {
             Interfaz.esperandoMuchoTiempo();
             return false;
-        } catch (BrokenBarrierException e) {
-            // 5. Otro hilo se fue por Timeout. Este hilo no subió.
-        	Interfaz.esperandoMuchoTiempo();
-            return false;
         }
+        
+        try {
+        	Thread.sleep(tiempoViaje); 
+			barreraBajada.await();
+			Interfaz.personaSeBajo(); 
+		} catch (InterruptedException | BrokenBarrierException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        return true;
     }
 
-    // --- Métodos de Ayuda (sin cambios) ---
 
     private int incrementarUso() {
         return usos.addAndGet(cantMolinetes);
@@ -73,6 +86,6 @@ public class MedioDeElevacion {
         return usos.get();
     }
     public boolean estaEnUso() {
-    	return true;
+        return true;
     }
 }

@@ -41,7 +41,9 @@ public class ComplejoInvernal {
     }
 
     public void participarClase() throws InterruptedException {
-        centroDeClasesGrupales.participarClase();
+    	java.util.Random random = new java.util.Random();
+        String tipo = random.nextBoolean() ? "Sky" : "Snow";
+        centroDeClasesGrupales.participarClase(tipo);
     }
 
     public void instruirClase() throws InterruptedException {

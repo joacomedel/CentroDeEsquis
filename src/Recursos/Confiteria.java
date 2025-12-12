@@ -62,7 +62,7 @@ public class Confiteria {
     	Interfaz.esperandoCaja();
         semCaja.acquire();
         Interfaz.pagandoEnCaja();
-        Thread.sleep(obtenerValorRandomEntre(500, 5000));
+        Thread.sleep(obtenerValorRandomEntre(250, 750));
         // Paga en caja
         Interfaz.terminoCaja();
         semCaja.release();
